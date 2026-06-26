@@ -1,0 +1,100 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile and security settings",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "editor", "viewer"] },
+        "mfaEnabled": { "type": "boolean" },
+        "mfaType": { "type": "string", "enum": ["sms", "totp", "none"] },
+        "phoneNumber": { "type": "string" },
+        "storageUsed": { "type": "number" },
+        "storageLimit": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "lastLogin": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["active", "suspended", "pending"] }
+      },
+      "required": ["uid", "email", "role", "status"]
+    },
+    "File": {
+      "title": "File",
+      "description": "Metadata for encrypted files",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "size": { "type": "number" },
+        "mimeType": { "type": "string" },
+        "encryptedKey": { "type": "string" },
+        "storagePath": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "isPublic": { "type": "boolean" }
+      },
+      "required": ["id", "name", "ownerId", "size", "storagePath"]
+    },
+    "Share": {
+      "title": "Share",
+      "description": "File sharing permissions",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "fileId": { "type": "string" },
+        "fileName": { "type": "string" },
+        "sharedBy": { "type": "string" },
+        "sharedWith": { "type": "string", "description": "Email or 'anyone'" },
+        "type": { "type": "string", "enum": ["user", "link", "group"] },
+        "permissions": { "type": "array", "items": { "type": "string" } },
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "accessCount": { "type": "number" },
+        "status": { "type": "string", "enum": ["active", "expired", "revoked"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "fileId", "sharedBy", "type", "status"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Security and activity logs",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "action": { "type": "string" },
+        "resourceType": { "type": "string" },
+        "resourceId": { "type": "string" },
+        "resourceName": { "type": "string" },
+        "severity": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "ipAddress": { "type": "string" },
+        "location": { "type": "string" },
+        "details": { "type": "string" }
+      },
+      "required": ["id", "action", "severity", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/files/{fileId}": {
+      "schema": "File",
+      "description": "File metadata"
+    },
+    "/shares/{shareId}": {
+      "schema": "Share",
+      "description": "Sharing records"
+    },
+    "/auditLogs/{logId}": {
+      "schema": "AuditLog",
+      "description": "System audit logs"
+    }
+  }
+}
